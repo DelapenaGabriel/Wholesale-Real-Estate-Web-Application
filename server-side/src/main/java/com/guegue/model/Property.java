@@ -26,8 +26,11 @@ public class Property {
     private int bathroom;
     @NotBlank
     private int sqft;
+    @NotBlank
     private BigDecimal price;
+    @NotBlank
     private BigDecimal arv;
+    @NotBlank
     private int daysOnMarket;
     private String imageUrl;
     private LocalDateTime createdAt;

@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -51,9 +53,9 @@ public class PropertyController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public Property addProperty (@Valid @RequestBody Property newProperty, Principal principal){
+    public Property addProperty (@Valid @RequestBody Property newProperty, Principal principal, @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
         try{
-            return propertyService.createProperty(newProperty, principal);
+            return propertyService.createProperty(newProperty, principal, file);
         } catch (DaoException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()); //Status Code: 500 = API itself has a problem and can't fulfill the request at this time
         }

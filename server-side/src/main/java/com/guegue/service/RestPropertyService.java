@@ -7,19 +7,23 @@ import com.guegue.model.User;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
 @Service
 public class RestPropertyService implements PropertyService{
 
+    private CloudinaryService cloudinaryService;
     private PropertyDao propertyDao;
     private UserDao userDao;
 
-    public RestPropertyService (PropertyDao propertyDao, UserDao userDao){
+    public RestPropertyService (PropertyDao propertyDao, UserDao userDao, CloudinaryService cloudinaryService){
         this.propertyDao = propertyDao;
         this.userDao = userDao;
+        this.cloudinaryService = cloudinaryService;
     }
 
 
@@ -70,10 +74,17 @@ public class RestPropertyService implements PropertyService{
     }
 
     @Override
-    public Property createProperty(Property newProperty, Principal principal) {
+    public Property createProperty(Property newProperty, Principal principal, MultipartFile file) throws IOException {
         User user = getUser(principal);
 
         if (isAdminUser(user)){
+            // Upload image to cloud if a file is provided
+            if (file != null && !file.isEmpty()) {
+                String imageUrl = cloudinaryService.upload(file);
+                newProperty.setImageUrl(imageUrl);
+            } else {
+                newProperty.setImageUrl("https://homeye.sdsu.edu/static/house_explore/virltor/houses/house0.jpg");
+            }
             return propertyDao.createProperty(newProperty);
         }
         else{

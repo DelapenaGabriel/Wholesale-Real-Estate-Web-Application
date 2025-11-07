@@ -27,7 +27,7 @@ CREATE TABLE property(
 	price NUMERIC (12,2) CHECK (price > 0) NOT NULL,
 	arv NUMERIC (12,2) CHECK (arv > 0) NOT NULL,
 	days_on_market int NOT NULL,
-	image_url VARCHAR (500) NOT NULL,
+	image_url VARCHAR (500) NOT NULL DEFAULT 'https://homeye.sdsu.edu/static/house_explore/virltor/houses/house0.jpg',
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT PK_property PRIMARY KEY (id)
 );
