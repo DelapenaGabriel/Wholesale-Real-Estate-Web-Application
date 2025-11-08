@@ -27,6 +27,7 @@ public class PropertyController {
         this.propertyService = propertyService;
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public Property getProperty(@PathVariable int id, Principal principal) {
         Property property;
@@ -42,6 +43,7 @@ public class PropertyController {
         return property;
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("")
     public List<Property> listProperties (Principal principal){
         try{
