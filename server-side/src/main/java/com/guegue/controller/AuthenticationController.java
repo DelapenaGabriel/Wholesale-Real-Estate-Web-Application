@@ -9,11 +9,14 @@ import com.guegue.model.User;
 import com.guegue.security.jwt.TokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.security.Principal;
 
 /**
  * AuthenticationController is a class used for handling requests to authenticate Users.
@@ -72,6 +75,16 @@ public class AuthenticationController {
         }
         catch (DaoException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DAO error - " + e.getMessage()); //Status Code: 500 = API itself has a problem and can't fulfill the request at this time
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user")
+    public User getUser (Principal principal){
+        try{
+            return userDao.getUserByUsername(principal.getName());
+        }catch (DaoException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()); //Status Code: 500 = API itself has a problem and can't fulfill the request at this time
         }
     }
 

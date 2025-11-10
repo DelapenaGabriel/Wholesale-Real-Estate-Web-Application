@@ -16,14 +16,13 @@ import java.util.List;
 @Service
 public class RestPropertyService implements PropertyService{
 
-    private CloudinaryService cloudinaryService;
     private PropertyDao propertyDao;
     private UserDao userDao;
 
-    public RestPropertyService (PropertyDao propertyDao, UserDao userDao, CloudinaryService cloudinaryService){
+    public RestPropertyService (PropertyDao propertyDao, UserDao userDao){
         this.propertyDao = propertyDao;
         this.userDao = userDao;
-        this.cloudinaryService = cloudinaryService;
+
     }
 
 
@@ -74,22 +73,10 @@ public class RestPropertyService implements PropertyService{
     }
 
     @Override
-    public Property createProperty(Property newProperty, Principal principal, MultipartFile file) throws IOException {
+    public Property createProperty(Property newProperty, Principal principal) {
         User user = getUser(principal);
-
-        if (isAdminUser(user)){
-            // Upload image to cloud if a file is provided
-            if (file != null && !file.isEmpty()) {
-                String imageUrl = cloudinaryService.upload(file);
-                newProperty.setImageUrl(imageUrl);
-            } else {
-                newProperty.setImageUrl("https://homeye.sdsu.edu/static/house_explore/virltor/houses/house0.jpg");
-            }
             return propertyDao.createProperty(newProperty);
-        }
-        else{
-            throw new AccessDeniedException("Access denied");
-        }
+
     }
 
     @Override

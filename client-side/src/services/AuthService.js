@@ -8,6 +8,10 @@ export default {
 
   register(user) {
     return axios.post('/api/register', user)
+  },
+
+  getUser() {
+    return axios.get(`/api/user`)
   }
 
 }

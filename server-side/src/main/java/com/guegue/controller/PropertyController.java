@@ -55,9 +55,9 @@ public class PropertyController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public Property addProperty (@Valid @RequestBody Property newProperty, Principal principal, @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+    public Property addProperty (@Valid @RequestBody Property newProperty, Principal principal){
         try{
-            return propertyService.createProperty(newProperty, principal, file);
+            return propertyService.createProperty(newProperty, principal);
         } catch (DaoException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()); //Status Code: 500 = API itself has a problem and can't fulfill the request at this time
         }

@@ -15,7 +15,7 @@ public interface PropertyService {
 
     Property updateProperty(Property updatedProperty, Principal principal);
 
-    Property createProperty(Property newProperty, Principal principal, MultipartFile file) throws IOException;
+    Property createProperty(Property newProperty, Principal principal) ;
 
     int deletePropertyByID(int id, Principal principal);
 }
