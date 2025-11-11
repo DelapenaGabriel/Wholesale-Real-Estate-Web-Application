@@ -19,13 +19,16 @@
       </div>
 
       <div class="sell-and-deal-buttons">
-        <div class="sell-button">
-          <p>Sell Property Fast</p>
-          <i class="fa-solid fa-arrow-right-long"></i>
-        </div>
-        <div class="wholesale-deals-button">
-          <p>View Wholesale Deals</p>
-        </div>
+        <a href="#sell" @click.prevent="scrollToSection('sell')"
+          ><div class="sell-button">
+            <p>Sell Property Fast</p>
+            <i class="fa-solid fa-arrow-right-long"></i></div
+        ></a>
+        <a href="#buy" @click.prevent="scrollToSection('buy')"
+          ><div class="wholesale-deals-button">
+            <p>View Wholesale Deals</p>
+          </div></a
+        >
       </div>
 
       <div class="time-fees-deals-cards">
@@ -56,6 +59,19 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    scrollToSection(id) {
+      const el = document.getElementById(id)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    },
+  },
+}
+</script>
 
 <style scoped>
 .first-section {
@@ -122,6 +138,9 @@
   margin-top: 30px;
   font-weight: 550;
   flex-wrap: wrap;
+}
+a {
+  text-decoration: none;
 }
 .sell-button,
 .wholesale-deals-button {
@@ -282,7 +301,7 @@ p {
     width: 100%;
   }
 
-  .time-text, 
+  .time-text,
   .fees-text,
   .deals-text {
     text-align: left;

@@ -11,57 +11,70 @@
 
     <div class="nav-links" :class="{ open: menuOpen }">
       <ul>
-        <li>Home</li>
-        <li>Investment Deals</li>
-        <li>Quick Sale</li>
-        <li>Properties</li>
+        <li><a href="#home" @click.prevent="scrollToSection('home')">Home</a></li>
+        <li><a href="#why-us" @click.prevent="scrollToSection('why-us')">Investment Deals</a></li>
+        <li><a href="#sell" @click.prevent="scrollToSection('sell')">Quick Sale</a></li>
+        <li><a href="#buy" @click.prevent="scrollToSection('buy')">Properties</a></li>
         <li id="phone-number">✆ (702) 596-3245</li>
-        <li v-if="user.role !== 'ROLE_ADMIN'" id="get-offer-button">Get Cash Offer</li>
-        <div v-else class="admin-nav">
+        <li v-if="!isAdmin" id="get-offer-button">
+          <a href="#sell" @click.prevent="scrollToSection('sell')">Get Cash Offer</a>
+        </li>
+        <li v-else class="admin-nav">
           <div class="admin-box">
-            <li id="admin"><i class="fa fa-user"></i>Admin</li>
+            <i class="fa-regular fa-user"></i>
+            <p>Admin</p>
           </div>
-          <router-link :to="{ name: 'logout' }"
-            ><button id="logout"><i class="fa fa-sign-out"></i> Logout</button></router-link
-          >
-        </div>
+          <div class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <router-link :to="{ name: 'logout' }"><p id="logout-text">Logout</p></router-link>
+          </div>
+        </li>
       </ul>
     </div>
   </div>
 </template>
 
 <script>
-import authService from '@/services/AuthService'
+import AuthService from '@/services/AuthService'
+
 export default {
   data() {
     return {
-      user: {
-        id: '',
-        username: '',
-        role: '',
-      },
       menuOpen: false,
     }
   },
-  methods: {
-    toggleMenu() {
-      this.menuOpen = !this.menuOpen
+  computed: {
+    // always render from Vuex (reactive)
+    user() {
+      return this.$store.state.user || {}
     },
-    getUser() {
-      authService
-        .getUser()
-        .then((response) => {
-          this.user.id = response.data.id
-          this.user.username = response.data.username
-          this.user.role = response.data.role
-        })
-        .catch((error) => {
-          console.log('Error Occurred retrieving user', error)
-        })
+    // robust role check
+    isAdmin() {
+      const role = this.user.role || (Array.isArray(this.user.authorities) && this.user.authorities[0]) || ''
+      return ['ROLE_ADMIN', 'ADMIN', 'admin', 'ROLE_SUPER_ADMIN'].includes(String(role))
+    },
+  },
+  mounted() {
+    // hydrate on hard refresh (if token exists but store empty)
+    const hasRole = !!(this.$store.state.user && this.$store.state.user.role)
+    const token = this.$store.state.token || localStorage.getItem('token')
+    if (!hasRole && token) {
+      AuthService.getUser()
+        .then((res) => { if (res && res.data) this.$store.commit('SET_USER', res.data) })
+        .catch(() => {})
+    }
+  },
+  methods: {
+    toggleMenu() { this.menuOpen = !this.menuOpen },
+    scrollToSection(id) {
+      const el = document.getElementById(id)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      this.menuOpen = false
     },
   },
 }
 </script>
+
 
 <style scoped>
 i {
@@ -69,7 +82,35 @@ i {
 }
 .admin-nav {
   display: flex;
+  gap: 10px;
   align-items: center;
+}
+.admin-box,
+.logout {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  border: 1px solid #383737;
+  padding: 7px 15px;
+  border-radius: 15px;
+}
+.admin-box {
+  color: rgb(238, 118, 238);
+  background-color: rgba(101, 56, 101, 0.523);
+  border: 1px solid rgb(141, 60, 141);
+}
+.logout {
+  color: rgb(213, 100, 100);
+  background-color: rgba(101, 56, 56, 0.416);
+  border: 1px solid rgb(163, 80, 78);
+  cursor: pointer;
+}
+#logout-text {
+  color: rgb(213, 100, 100);
+}
+.logout:hover, .logout:hover #logout-text {
+  background-color: rgb(163, 80, 78);
+  color: white;
 }
 #admin {
   padding: 7px 15px;
@@ -121,6 +162,11 @@ li {
 ul li:nth-child(-n + 4):hover {
   font-weight: 550;
 }
+
+ul li a {
+  text-decoration: none;
+  color: white;
+}
 #phone-number {
   color: #55dbc1;
 }
@@ -131,14 +177,19 @@ ul li:nth-child(-n + 4):hover {
     rgba(87, 199, 133, 1) 26%,
     rgb(197, 185, 71) 100%
   );
-  font-weight: bold;
+  font-weight: bolder;
   padding: 10px;
   border-radius: 5px;
   color: white;
   cursor: pointer;
 }
 #get-offer-button:hover {
-  color: #000000;
+  background: linear-gradient(
+    90deg,
+    rgba(42, 155, 132, 0.756) 0%,
+    rgba(87, 199, 134, 0.658) 26%,
+    rgba(197, 184, 71, 0.769) 100%
+  );
 }
 
 /* Hamburger Icon (hidden on desktop) */
@@ -184,6 +235,5 @@ ul li:nth-child(-n + 4):hover {
     width: 100%;
     text-align: center;
   }
-  
 }
 </style>

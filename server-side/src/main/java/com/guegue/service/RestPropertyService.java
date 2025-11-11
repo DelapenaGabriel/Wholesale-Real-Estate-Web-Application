@@ -49,15 +49,7 @@ public class RestPropertyService implements PropertyService{
 
     @Override
     public List<Property> getProperties(Principal principal) {
-        User user = getUser(principal);
-
-
-        if (isAdminUser(user)){
-            return propertyDao.getProperties();
-        }
-        else{
-            throw new AccessDeniedException("Access denied");
-        }
+        return propertyDao.getProperties();
     }
 
     @Override
