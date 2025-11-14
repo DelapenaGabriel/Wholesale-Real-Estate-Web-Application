@@ -43,6 +43,7 @@ public class PropertyController {
         return property;
     }
 
+
     @PreAuthorize("permitAll()")
     @GetMapping("")
     public List<Property> listProperties (Principal principal){

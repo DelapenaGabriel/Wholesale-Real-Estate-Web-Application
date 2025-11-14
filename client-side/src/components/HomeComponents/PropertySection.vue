@@ -125,7 +125,7 @@
           </div>
 
           <!-- Form -->
-          <form class="inq-form" @submit.prevent="submitInquiry">
+          <form class="inq-form" @submit.prevent="submitBuyerInquiry">
             <div class="row">
               <div class="name-container">
                 <label class="f-label">Full Name *</label>
@@ -198,8 +198,9 @@
 
 <script>
 import PropertyService from '@/services/PropertyService'
-// import InquiryService from '@/services/InquiryService' // when ready
-
+import InquiriesService from '@/services/InquiriesService' // when ready
+import { faCity } from '@fortawesome/free-solid-svg-icons'
+import emailjs from '@emailjs/browser'
 export default {
   data() {
     return {
@@ -208,7 +209,12 @@ export default {
       showInquiry: false,
       selected: null,
       // use the same name as the template bindings:
-      form: { name: '', phone: '', email: '', message: '' },
+      form: {
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+      },
       submitting: false,
       error: '',
       success: false,
@@ -258,16 +264,58 @@ export default {
       window.removeEventListener('keydown', this._esc)
     },
 
-    submitInquiry() {
+    submitBuyerInquiry() {
       this.submitting = true
       this.error = ''
       this.success = false
 
-      // Example .then/.catch flow:
-      // InquiryService.create({ propertyId: this.selected.id, ...this.form })
-      //   .then(() => { this.success = true })
-      //   .catch(() => { this.error = 'Failed to submit. Please try again.' })
-      //   .finally(() => { this.submitting = false })
+      // ✅ Use the correct service and include property details
+      InquiriesService.createInquiry({
+        fullName: this.form.name,
+        email: this.form.email,
+        phone: this.form.phone,
+        address: this.selected.address,
+        city: this.selected.city,
+        state: this.selected.state,
+        zipCode: this.selected.zipCode,
+        propertyType: this.selected.type,
+        bedrooms: this.selected.bedroom,
+        bathrooms: this.selected.bathroom,
+        sqft: this.selected.sqft,
+        condition: null,
+        timeline: this.selected.daysOnMarket,
+        additionalDetails: this.form.message,
+        status: 'New',
+        role: 'Buyer',
+      })
+        .then(() => {
+          return this.sendEmail()
+        })
+        .then(() => {
+          this.success = true
+          setTimeout(() => this.closeInquiry(), 2500)
+        })
+        .catch(() => {
+          this.error = '❌ Failed to submit. Please try again.'
+        })
+        .finally(() => {
+          this.submitting = false
+        })
+    },
+    sendEmail() {
+      emailjs
+        .send(
+          'service_y5ti5lk', // ← Replace with your EmailJS Service ID
+          'template_ef6wzqa', // ← Replace with your EmailJS Template ID
+          this.form,
+          'rabtsnlxlQr7aY-3R', // ← Replace with your EmailJS Public Key
+        )
+        .then(() => {
+          console.log('Email sent!')
+        })
+        .catch((err) => {
+          console.error('Email failed:', err)
+        })
     },
   },
   // ✅ mounted must be at the root of the component, not inside methods
@@ -370,7 +418,7 @@ export default {
   width: 100%;
   height: 100%;
   /* here’s the linear gradient from the screenshot style */
-  background: linear-gradient(180deg, rgba(15, 22, 33, 0) 0%, rgba(15, 22, 33, 0.75) 100%);
+  background: linear-gradient(180deg, rgba(15, 22, 33, 0.078) 0%, rgba(15, 22, 33, 0.132) 100%);
 }
 
 /* Badges */

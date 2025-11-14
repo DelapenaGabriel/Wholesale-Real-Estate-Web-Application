@@ -30,11 +30,11 @@
     <h2>Contact Us</h2>
     <p>
       For questions about this policy, please email us at:
-      <strong>privacy@gueguerealestate.com</strong>
+      <strong>joemelandre@guegueinvest.org</strong>
     </p>
   </section>
 </template>
 
-<style scoped>
-@import 'src\assets\LegalStyles.css';
+<style>
+@import '/src/assets/LegalStyles.css';
 </style>

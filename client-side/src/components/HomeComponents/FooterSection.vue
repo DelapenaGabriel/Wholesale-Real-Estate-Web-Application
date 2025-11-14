@@ -14,6 +14,11 @@
           Pioneering wholesale real estate solutions. We connect motivated sellers with qualified
           cash buyers, facilitating fast, profitable transactions nationwide.
         </p>
+        <div class="social-media">
+          <a href="https://www.instagram.com/gueguerealty" target="_blank" rel="noopener noreferrer"
+            ><i class="fa-brands fa-instagram"></i
+          ></a>
+        </div>
       </div>
 
       <!-- Quick Links -->
@@ -227,6 +232,18 @@ export default {
 .admin-login { position: fixed; right: 20px; bottom: 20px; background: linear-gradient(90deg, #a100ff, #ff0077); color: #fff; border: none; padding: 0.6rem 1.2rem; border-radius: 25px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); z-index: 1000; transition: transform .2s ease, opacity .2s ease; }
 .admin-login:hover { transform: scale(1.05); opacity: 0.9; }
 @media (min-width: 768px) { .footer-bottom { flex-direction: row; justify-content: space-between; } }
+
+/* --- IG logo --- */
+.social-media a{
+text-decoration: none;
+color: #fff;
+font-size: 1.4rem;
+transition: color 0.3s;
+}
+.social-media a:hover{
+color: #bdbdbd;
+}
+
 
 /* --- Modal styles --- */
 .al-overlay {

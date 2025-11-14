@@ -24,10 +24,10 @@
             <i class="fa-regular fa-user"></i>
             <p>Admin</p>
           </div>
-          <div class="logout">
+          <router-link :to="{ name: 'logout' }"><div class="logout">
             <i class="fa-solid fa-right-from-bracket"></i>
-            <router-link :to="{ name: 'logout' }"><p id="logout-text">Logout</p></router-link>
-          </div>
+            <p id="logout-text">Logout</p>
+          </div></router-link>
         </li>
       </ul>
     </div>

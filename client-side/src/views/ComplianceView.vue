@@ -29,11 +29,11 @@
     <h2>Reporting Issues</h2>
     <p>
       To report compliance or ethics concerns, email us at:
-      <strong>compliance@gueguerealestate.com</strong>.
+      <strong>joemelandre@guegueinvest.org</strong>.
     </p>
   </section>
 </template>
 
-<style scoped>
-@import 'src\assets\LegalStyles.css';
+<style>
+@import '/src/assets/LegalStyles.css';
 </style>

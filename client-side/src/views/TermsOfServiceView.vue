@@ -35,6 +35,6 @@
   </section>
 </template>
 
-<style scoped>
-@import 'src\assets\LegalStyles.css';
+<style>
+@import '/src/assets/LegalStyles.css';
 </style>

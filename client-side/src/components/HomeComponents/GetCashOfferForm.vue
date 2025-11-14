@@ -11,7 +11,7 @@
     </p>
 
     <div class="form-card">
-      <form @submit.prevent="sendEmail">
+      <form @submit.prevent="createSellerInquiry">
         <!-- Contact Info -->
         <div class="form-section">
           <div class="section-header">
@@ -89,7 +89,9 @@
             <li><i class="fa-solid fa-clock"></i> Response within 24 hours</li>
             <li><i class="fa-solid fa-bolt"></i> Close in as fast as 7 days</li>
           </ul>
-          <button type="submit" class="submit-btn" :disabled="loading">{{ loading ? "Sending..." : "Get My Cash Offer" }}</button>
+          <button type="submit" class="submit-btn" :disabled="loading">
+            {{ loading ? 'Sending...' : 'Get My Cash Offer' }}
+          </button>
         </div>
       </form>
     </div>
@@ -98,7 +100,7 @@
 
 <script>
 import emailjs from '@emailjs/browser'
-
+import InquiriesService from '@/services/InquiriesService'
 export default {
   data() {
     return {
@@ -119,29 +121,60 @@ export default {
         timeline: '',
         details: '',
       },
+      submitting: false,
+      error: '',
+      success: false,
     }
   },
   methods: {
+    createSellerInquiry() {
+      this.submitting = true
+      this.error = ''
+      this.success = false
+
+      InquiriesService.createInquiry({
+        fullName: this.form.name,
+        email: this.form.email,
+        phone: this.form.phone,
+        address: this.form.address,
+        city: this.form.city,
+        state: this.form.state,
+        zipCode: this.form.zip,
+        propertyType: this.form.propertyType,
+        bedrooms: this.form.bedrooms,
+        bathrooms: this.form.bathrooms,
+        sqft: this.form.sqft,
+        condition: this.form.condition,
+        timeline: this.form.timeline,
+        additionalDetails: this.form.details,
+        status: 'New',
+        role: 'Seller',
+      })
+        .then(() => {
+          this.success = true
+          return this.sendEmail()
+        })
+        .then(() => {
+          setTimeout(() => this.closeInquiry(), 2500)
+          this.resetForm()
+        })
+        .catch(() => {
+          this.error = '❌ Failed to submit. Please try again.'
+        })
+        .finally(() => {
+          this.submitting = false
+        })
+    },
     sendEmail() {
       this.loading = true
-
-      emailjs
-        .send(
-          'service_y5ti5lk', // ← Replace with your EmailJS Service ID
-          'template_zlclujo', // ← Replace with your EmailJS Template ID
-          this.form,
-          'rabtsnlxlQr7aY-3R', // ← Replace with your EmailJS Public Key
-        )
-        .then(
-          (result) => {
-            alert('✅ Your form has been submitted successfully! We’ll contact you soon.')
-            this.resetForm()
-          },
-          (error) => {
-            console.error('EmailJS Error:', error)
-            alert('❌ Something went wrong. Please try again later.')
-          },
-        )
+      return emailjs
+        .send('service_y5ti5lk', 'template_zlclujo', this.form, 'rabtsnlxlQr7aY-3R')
+        .then(() => {
+          console.log('Email sent!')
+        })
+        .catch((err) => {
+          console.error('Email failed:', err)
+        })
         .finally(() => {
           this.loading = false
         })
@@ -312,6 +345,9 @@ textarea {
 
 /* Mobile */
 @media screen and (max-width: 768px) {
+  .info-and-button {
+    flex-direction: column;
+  }
   .form-card {
     padding: 1.5rem;
   }
@@ -321,6 +357,10 @@ textarea {
   }
   .submit-btn {
     float: none;
+  }
+  .info-list {
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 </style>

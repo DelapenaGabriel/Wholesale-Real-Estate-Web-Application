@@ -75,12 +75,7 @@ export default {
 
 <style scoped>
 .first-section {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(17, 43, 64, 1) 88%,
-    rgba(1, 1, 5, 1) 100%
-  );
+  background: linear-gradient(to right, #0a0b1b 0%, #0d141e 100%);
   height: 100vh;
   width: 100%;
   display: flex;

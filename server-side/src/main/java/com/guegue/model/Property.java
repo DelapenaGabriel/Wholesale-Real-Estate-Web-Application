@@ -1,9 +1,12 @@
 package com.guegue.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Property {
@@ -21,17 +24,17 @@ public class Property {
     @NotBlank
     private String state;
     @NotBlank
+    private String zipCode;
+    @NotNull
     private int bedroom;
-    @NotBlank
+    @NotNull
     private int bathroom;
-    @NotBlank
+    @NotNull
     private int sqft;
-    @NotBlank
+    @NotNull
     private BigDecimal price;
-    @NotBlank
+    @NotNull
     private BigDecimal arv;
-    @NotBlank
-    private int daysOnMarket;
     private String imageUrl;
     private LocalDateTime createdAt;
 
@@ -89,6 +92,14 @@ public class Property {
         return state;
     }
 
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
     public void setState(String state) {
         this.state = state;
     }
@@ -133,13 +144,6 @@ public class Property {
         this.arv = arv;
     }
 
-    public int getDaysOnMarket() {
-        return daysOnMarket;
-    }
-
-    public void setDaysOnMarket(int daysOnMarket) {
-        this.daysOnMarket = daysOnMarket;
-    }
 
     public String getImageUrl() {
         return imageUrl;
@@ -157,17 +161,27 @@ public class Property {
         this.createdAt = createdAt;
     }
 
+    // 🔥 NEW: computed getter — this is what your Vue will use
+    public int getDaysOnMarket() {
+        if (createdAt == null) {
+            return 0;
+        }
+        LocalDate createdDate = createdAt.toLocalDate();
+        LocalDate today = LocalDate.now();
+        return (int) ChronoUnit.DAYS.between(createdDate, today);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Property property = (Property) o;
-        return id == property.id && bedroom == property.bedroom && bathroom == property.bathroom && sqft == property.sqft && daysOnMarket == property.daysOnMarket && Objects.equals(title, property.title) && Objects.equals(type, property.type) && Objects.equals(status, property.status) && Objects.equals(address, property.address) && Objects.equals(city, property.city) && Objects.equals(state, property.state) && Objects.equals(price, property.price) && Objects.equals(arv, property.arv) && Objects.equals(imageUrl, property.imageUrl) && Objects.equals(createdAt, property.createdAt);
+        return id == property.id && bedroom == property.bedroom && bathroom == property.bathroom && sqft == property.sqft  && Objects.equals(title, property.title) && Objects.equals(type, property.type) && Objects.equals(status, property.status) && Objects.equals(address, property.address) && Objects.equals(city, property.city) && Objects.equals(state, property.state) && Objects.equals(price, property.price) && Objects.equals(arv, property.arv) && Objects.equals(imageUrl, property.imageUrl) && Objects.equals(createdAt, property.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, type, status, address, city, state, bedroom, bathroom, sqft, price, arv, daysOnMarket, imageUrl, createdAt);
+        return Objects.hash(id, title, type, status, address, city, state, bedroom, bathroom, sqft, price, arv, imageUrl, createdAt);
     }
 
     @Override
@@ -185,7 +199,6 @@ public class Property {
                 ", sqft=" + sqft +
                 ", price=" + price +
                 ", arv=" + arv +
-                ", daysOnMarket=" + daysOnMarket +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", createdAt=" + createdAt +
                 '}';

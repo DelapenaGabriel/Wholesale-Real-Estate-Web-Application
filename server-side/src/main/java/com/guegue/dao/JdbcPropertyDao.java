@@ -63,15 +63,15 @@ public class JdbcPropertyDao implements PropertyDao{
         Property property = null;
 
         String sql = "UPDATE property " +
-                "SET title = ?, type = ?, status = ?, address = ?, city = ?, state = ?, bedroom = ?, bathroom = ?, sqft = ?, " +
-                "price = ?, arv = ?, days_on_market = ?, image_url = ?, created_at = ? " +
+                "SET title = ?, type = ?, status = ?, address = ?, city = ?, state = ?, zip_code = ?, bedroom = ?, bathroom = ?, sqft = ?, " +
+                "price = ?, arv = ?, image_url = ? " +
                 "WHERE id = ?;";
 
         try{
             int rowsAffected = jdbcTemplate.update(sql, updatedProperty.getTitle(), updatedProperty.getType(), updatedProperty.getStatus(),
-                    updatedProperty.getAddress(), updatedProperty.getCity(), updatedProperty.getState(), updatedProperty.getBedroom(),
+                    updatedProperty.getAddress(), updatedProperty.getCity(), updatedProperty.getState(), updatedProperty.getZipCode(), updatedProperty.getBedroom(),
                     updatedProperty.getBathroom(), updatedProperty.getSqft(), updatedProperty.getPrice(), updatedProperty.getArv(),
-                    updatedProperty.getDaysOnMarket(), updatedProperty.getImageUrl(), updatedProperty.getCreatedAt(),
+                    updatedProperty.getImageUrl(),
                     updatedProperty.getId());
             if (rowsAffected == 0){
                 throw new DaoException("Zero rows affected, expected at least one");
@@ -90,14 +90,13 @@ public class JdbcPropertyDao implements PropertyDao{
         Property property = null;
         int newId;
 
-        String sql = "INSERT INTO property (title, type, status, address, city, state, bedroom, bathroom, sqft, price, arv, days_on_market, image_url, created_at) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id;";
+        String sql = "INSERT INTO property (title, type, status, address, city, state, zip_code, bedroom, bathroom, sqft, price, arv, image_url) " +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id;";
 
         try {
             newId = jdbcTemplate.queryForObject(sql, int.class, newProperty.getTitle(), newProperty.getType(), newProperty.getStatus(),
-                    newProperty.getAddress(), newProperty.getCity(), newProperty.getState(), newProperty.getBedroom(), newProperty.getBathroom(),
-                    newProperty.getSqft(), newProperty.getPrice(), newProperty.getArv(), newProperty.getDaysOnMarket(), newProperty.getImageUrl(),
-                    newProperty.getCreatedAt());
+                    newProperty.getAddress(), newProperty.getCity(), newProperty.getState(), newProperty.getZipCode(), newProperty.getBedroom(), newProperty.getBathroom(),
+                    newProperty.getSqft(), newProperty.getPrice(), newProperty.getArv(),newProperty.getImageUrl());
             property = getPropertyByID(newId);
         }catch (CannotGetJdbcConnectionException e){
             throw new DaoException("Cannot connect to server or database", e);
@@ -130,14 +129,16 @@ public class JdbcPropertyDao implements PropertyDao{
         property.setAddress(rowSet.getString("address"));
         property.setCity(rowSet.getString("city"));
         property.setState(rowSet.getString("state"));
+        property.setZipCode(rowSet.getString("zip_code"));
         property.setBedroom(rowSet.getInt("bedroom"));
         property.setBathroom(rowSet.getInt("bathroom"));
         property.setSqft(rowSet.getInt("sqft"));
         property.setPrice(rowSet.getBigDecimal("price"));
         property.setArv(rowSet.getBigDecimal("arv"));
-        property.setDaysOnMarket(rowSet.getInt("days_on_market"));
         property.setImageUrl(rowSet.getString("image_url"));
-        property.setCreatedAt(rowSet.getTimestamp("created_at").toLocalDateTime());
+        if (rowSet.getTimestamp("created_at") != null) {
+            property.setCreatedAt(rowSet.getTimestamp("created_at").toLocalDateTime());
+        }
         return property;
     }
 }
